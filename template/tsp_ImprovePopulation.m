@@ -16,10 +16,10 @@
 % Output parameter:
 %   improvedPopulation  - the new population after loop removal (if improve
 %                          <> 0, else the unchanged population).
-function newpop = tsp_ImprovePopulation(popsize,pop,improve,dists,x,y)
-
+function newpop = tsp_ImprovePopulation(popsize,NVAR,pop,improve,dists,REPRESENTATION,x,y, HEURISTIC)
+ncities= NVAR; 
 if (improve)
-     for i=1:popsize
+     for i=1:popsize   
      if isequal(REPRESENTATION,'adj')
          result =   adj2path(pop(i,:));
          if isequal(HEURISTIC,'cross_elimination')     
@@ -75,7 +75,68 @@ if (improve)
       else
             error('Representation not implemented!'); 
       end        
-  end  
-  newpop = pop;    
+     end
+     
+else
+         for i=1:popsize   
+             if isequal(REPRESENTATION,'adj')
+                result =   adj2path(pop(i,:));
+             if isequal(HEURISTIC,'cross_elimination')     
+                % untangle small crosses
+            start = randi([1,ncities]);
+            SMALL=7;
+            for j= 0: ceil (ncities/SMALL) 
+                result=Heuristic(x, y, result ,mod(start +SMALL*j,ncities),SMALL);
+            end      
+           %untangle large crosses 
+           LARGE= 40;
+           sniplength2=0;
+           if( ncities >= LARGE) 
+             sniplength2=randi([SMALL,LARGE]);
+           else
+             sniplength2= randi([SMALL,ncities]);
+           end
+           SampleAmount = ceil (ncities/LARGE); 
+           for k= 0: SampleAmount
+            start2 = randi([1,ncities]);
+            result=Heuristic(x, y,result ,start2,sniplength2);     
+           end
+             end     
+        % convert to adjacency representation
+        pop(i,:) = path2adj(result); 
+      elseif isequal(REPRESENTATION,'path')
+            if isequal(HEURISTIC,'cross_elimination')
+                result = pop(i,:);
+                % untangle small crosses
+                start = randi([1,ncities]);
+                SMALL=7;
+                for j= 0: ceil (ncities/SMALL) 
+                    result=Heuristic(x, y,result ,mod(start +SMALL*j,ncities),SMALL);
+                end 
+                %untangle large crosses 
+                LARGE= 40;
+                sniplength2=0;
+                if( ncities >= LARGE) 
+                    sniplength2=randi([SMALL,LARGE]);
+                else
+                sniplength2= randi([SMALL,ncities]);             
+                end
+                SampleAmount = ceil (ncities/LARGE); 
+                for k= 0: SampleAmount;
+                    start2 = randi([1,ncities]);
+                    result=Heuristic(x, y,result ,start2,sniplength2);     
+                end
+            end    
+      else
+            error('Representation not implemented!'); 
+      end        
+     end
+    
+     
+end
+
+
+
+newpop = pop;    
 end
 
