@@ -19,7 +19,7 @@
 function newpop = tsp_ImprovePopulation(popsize,NVAR,pop,improve,dists,REPRESENTATION,x,y, HEURISTIC)
 ncities= NVAR; 
 if (improve)
-     for i=1:popsize   
+     for i=1:popsize       
      if isequal(REPRESENTATION,'adj')
          result =   adj2path(pop(i,:));
          if isequal(HEURISTIC,'cross_elimination')     
@@ -48,8 +48,8 @@ if (improve)
         % convert to adjacency representation
         pop(i,:) = path2adj(result); 
       elseif isequal(REPRESENTATION,'path')
-            if isequal(HEURISTIC,'cross_elimination')
-                result = pop(i,:);
+            result = pop(i,:);
+            if isequal(HEURISTIC,'cross_elimination')            
                 % untangle small crosses
                 start = randi([1,ncities]);
                 SMALL=7;
@@ -68,7 +68,7 @@ if (improve)
                 for k= 0: SampleAmount;
                     start2 = randi([1,ncities]);
                     result=Heuristic(x, y,result ,start2,sniplength2);     
-                end
+                end               
             end  
             % remove loops
             pop(i,:)= improve_path(ncities,result ,dists);  
