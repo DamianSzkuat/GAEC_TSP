@@ -24,50 +24,45 @@
 %    NewChrom  - Matrix containing the chromosomes of the population
 %                after recombination in the same format as OldChrom.
 
-%  Author:    Hartmut Pohlheim
-%  History:   18.03.94     file created
+
+function NewChrom = recombinMuLambda(REC_F, Chrom, Distances, RecOpt,TABU)
 
 
-function NewChrom = recombin(REC_F, Chrom, Distances, RecOpt,TABU, SUBPOP)
-
-
-% Check parameter consistency
-   if nargin < 2, error('Not enough input parameter'); end
-
-   % Identify the population size (Nind)
-   [Nind,Nvar] = size(Chrom);
- 
-   if nargin < 6, SUBPOP = 1; end
-   if nargin > 5,
-      if isempty(SUBPOP), SUBPOP = 1;
-      elseif isnan(SUBPOP), SUBPOP = 1;
-      elseif length(SUBPOP) ~= 1, error('SUBPOP must be a scalar'); end
-   end
-
-   if (Nind/SUBPOP) ~= fix(Nind/SUBPOP), error('Chrom and SUBPOP disagree'); end
-   Nind = Nind/SUBPOP;  % Compute number of individuals per subpopulation
-
-   if nargin < 4, RecOpt = 0.7; end
-   if nargin > 3,
-      if isempty(RecOpt), RecOpt = 0.7;
-      elseif isnan(RecOpt), RecOpt = 0.7;
-      elseif length(RecOpt) ~= 1, error('RecOpt must be a scalar');
-      elseif (RecOpt < 0 | RecOpt > 1), error('RecOpt must be a scalar in [0, 1]'); end
-   end
+% % Check parameter consistency
+%    if nargin < 2, error('Not enough input parameter'); end
+% 
+%    % Identify the population size (Nind)
+%    [Nind,Nvar] = size(Chrom);
+%  
+%    if nargin < 6, SUBPOP = 1; end
+%    if nargin > 5,
+%       if isempty(SUBPOP), SUBPOP = 1;
+%       elseif isnan(SUBPOP), SUBPOP = 1;
+%       elseif length(SUBPOP) ~= 1, error('SUBPOP must be a scalar'); end
+%    end
+% 
+%    if (Nind/SUBPOP) ~= fix(Nind/SUBPOP), error('Chrom and SUBPOP disagree'); end
+%    Nind = Nind/SUBPOP;  % Compute number of individuals per subpopulation
+% 
+%    if nargin < 4, RecOpt = 0.7; end
+%    if nargin > 3,
+%       if isempty(RecOpt), RecOpt = 0.7;
+%       elseif isnan(RecOpt), RecOpt = 0.7;
+%       elseif length(RecOpt) ~= 1, error('RecOpt must be a scalar');
+%       elseif (RecOpt < 0 | RecOpt > 1), error('RecOpt must be a scalar in [0, 1]'); end
+%    end
 
 
 % Select individuals of one subpopulation and call low level function
    NewChrom = [];
-   for irun = 1:SUBPOP
-      ChromSub = Chrom((irun-1)*Nind+1:irun*Nind,:);
-      if isequal(REC_F,'scx')
-        NewChromSub = feval(REC_F, ChromSub, RecOpt, Distances,TABU);
+        %Make three times more children than there are parents.
+      if isequal(REC_F,'scxMuLambda')
+        NewChromSub = feval(REC_F, Chrom, RecOpt, Distances,TABU);
       else  
-        NewChromSub = feval(REC_F, ChromSub, RecOpt);
+        NewChromSub = feval(REC_F, Chrom, RecOpt);
       end
       NewChrom=[NewChrom; NewChromSub];
    end
 
 
 % End of function
-
