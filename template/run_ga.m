@@ -67,7 +67,8 @@ function run_ga(x, y, NIND, MAXGEN, NVAR, ELITIST, STOP_PERCENTAGE, PR_CROSS, PR
             
             if (sObjV(stopN)-sObjV(1) <= 1e-15)
                   break;
-            end          
+            end
+            
         	%assign fitness values to entire population
         	FitnV=ranking(ObjV);
         	%select individuals for breeding
