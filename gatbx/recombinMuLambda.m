@@ -58,6 +58,8 @@ function NewChrom = recombinMuLambda(REC_F, Chrom, Distances, RecOpt,TABU)
         %Make three times more children than there are parents.
       if isequal(REC_F,'scxMuLambda')
         NewChromSub = feval(REC_F, Chrom, RecOpt, Distances,TABU);
+      else if isequal(REC_F, 'scx')
+        NewChromSub = feval(REC_F, Chrom, RecOpt, Distances);      
       else  
         NewChromSub = feval(REC_F, Chrom, RecOpt);
       end

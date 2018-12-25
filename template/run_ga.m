@@ -100,36 +100,72 @@ function run_ga(x, y, NIND, MAXGEN, NVAR, ELITIST, STOP_PERCENTAGE, PR_CROSS, PR
                 error('Representation not implemented!'); 
             end 
             
+            % Stop criterion?
             %if (sObjV(stopN)-sObjV(1) <= 1e-15)
              %     break;
-            %end          
+            %end 
+            
         	%assign fitness values to entire population
         	FitnV=ranking(ObjV);
         	%select individuals for breeding
         	SelCh=select('sus', Chrom, FitnV, GGAP);
+            
+            % Original:
+            % if ismember(0,SelCh)
+            %     error("0 in offspring before crossover")
+            % end
+            % New: 
             if ismember(0,SelCh(1:NVAR))
                 error("0 in offspring before crossover")
             end
             
         	%recombine individuals (crossover)
+            % Original: 
+            % SelCh = recombin(CROSSOVER,SelCh,Dist,PR_CROSS);
+            % New:
             SelCh = recombinMuLambda(CROSSOVER,SelCh,Dist,PR_CROSS,TABU);
+            
+            % Original: 
+            % if ismember(0,SelCh)
+            %    error("0 in offspring after crossover")
+            % end
+            % New:
             if ismember(0,SelCh(1:NVAR))
                 error("0 in offspring after crossover")
             end
-        
+            
+            % Original: 
+            % SelCh = mutateTSP('inversion',SelCh,PR_MUT,REPRESENTATION);
+            % New: 
             SelCh = mutateTSP('inversion',SelCh,PR_MUT,REPRESENTATION,TABU);
+            
             %evaluate offspring, call objective function
+            % Original: 
+            % if ismember(0,SelCh)
+            %     error("0 in offspring after mutation")
+            % end
+            % New:
             if ismember(0,SelCh(1:NVAR))
                 error("0 in offspring after mutation")
             end
+            
+            % Original: 
+            % ObjVSel = tspfun(SelCh,Dist,REPRESENTATION);
+            % New: 
         	ObjVSel = tspfun(SelCh(:,1:NVAR),Dist,REPRESENTATION);
+            
             %reinsert offspring into population
+            % Original:
+            % [Chrom ObjV]=reins(Chrom,SelCh,1,1,ObjV,ObjVSel);
+            % New: 
         	[Chrom ObjV]=reinsMuLambda(Chrom,SelCh,1,1,ObjV,ObjVSel,TABU);
-            bla =size(Chrom)
-            blu = size( ObjV)
+            
+            % Original: 
+            % Chrom = tsp_ImprovePopulation(NIND, NVAR, Chrom, LOCALLOOP, Dist, REPRESENTATION, x, y, HEURISTIC);
+            % New:
             Chrom(:,1:NVAR) = tsp_ImprovePopulation(NIND, NVAR, Chrom(:,1:NVAR), LOCALLOOP, Dist, REPRESENTATION, x, y, HEURISTIC);
-                %increment generation counter  
-        	bli= size(Chrom)
-           gen=gen+1
+            
+            %increment generation counter  
+            gen=gen+1
         end
 end

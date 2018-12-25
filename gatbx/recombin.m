@@ -28,7 +28,7 @@
 %  History:   18.03.94     file created
 
 
-function NewChrom = recombin(REC_F, Chrom, Distances, RecOpt,TABU, SUBPOP)
+function NewChrom = recombin(REC_F, Chrom, Distances, RecOpt, SUBPOP);
 
 
 % Check parameter consistency
@@ -37,8 +37,8 @@ function NewChrom = recombin(REC_F, Chrom, Distances, RecOpt,TABU, SUBPOP)
    % Identify the population size (Nind)
    [Nind,Nvar] = size(Chrom);
  
-   if nargin < 6, SUBPOP = 1; end
-   if nargin > 5,
+   if nargin < 5, SUBPOP = 1; end
+   if nargin > 4,
       if isempty(SUBPOP), SUBPOP = 1;
       elseif isnan(SUBPOP), SUBPOP = 1;
       elseif length(SUBPOP) ~= 1, error('SUBPOP must be a scalar'); end
@@ -58,10 +58,10 @@ function NewChrom = recombin(REC_F, Chrom, Distances, RecOpt,TABU, SUBPOP)
 
 % Select individuals of one subpopulation and call low level function
    NewChrom = [];
-   for irun = 1:SUBPOP
+   for irun = 1:SUBPOP,
       ChromSub = Chrom((irun-1)*Nind+1:irun*Nind,:);
       if isequal(REC_F,'scx')
-        NewChromSub = feval(REC_F, ChromSub, RecOpt, Distances,TABU);
+        NewChromSub = feval(REC_F, ChromSub, RecOpt, Distances);
       else  
         NewChromSub = feval(REC_F, ChromSub, RecOpt);
       end
@@ -70,4 +70,3 @@ function NewChrom = recombin(REC_F, Chrom, Distances, RecOpt,TABU, SUBPOP)
 
 
 % End of function
-

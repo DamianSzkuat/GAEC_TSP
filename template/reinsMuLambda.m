@@ -39,7 +39,7 @@
 % History:    10.03.94     file created
 %             19.03.94     parameter checking improved
 
-function [Chrom, ObjVCh] = reinsMuLambda(Chrom, SelCh, SUBPOP, InsOpt, ObjVCh, ObjVSel,TABU)
+function [Chrom, ObjVCh] = reinsMuLambda(Chrom, SelCh, SUBPOP, InsOpt, ObjVCh, ObjVSel, TABU)
 
 
 % Check parameter consistency
