@@ -18,125 +18,59 @@
 %                          <> 0, else the unchanged population).
 function newpop = tsp_ImprovePopulation(popsize,NVAR,pop,improve,dists,REPRESENTATION,x,y, HEURISTIC)
 ncities= NVAR; 
-if (improve)
+SMALL=30;
+LARGE = 40;
+
      for i=1:popsize       
-     if isequal(REPRESENTATION,'adj')
-         result =   adj2path(pop(i,:));
-         if isequal(HEURISTIC,'cross_elimination')     
-            % untangle small crosses
-            start = randi([1,ncities]);
-            SMALL=7;
-            for j= 0: ceil (ncities/SMALL) 
-                result=Heuristic(x, y, result ,mod(start +SMALL*j,ncities),SMALL);
-            end      
-           %untangle large crosses 
-           LARGE= 40;
-           sniplength2=0;
-           if( ncities >= LARGE) 
-             sniplength2=randi([SMALL,LARGE]);
-           else
-             sniplength2= randi([SMALL,ncities]);
-           end
-           SampleAmount = ceil (ncities/LARGE); 
-           for k= 0: SampleAmount
-            start2 = randi([1,ncities]);
-            result=Heuristic(x, y,result ,start2,sniplength2);     
-           end
-        end
-        % remove loops
-        result = improve_path(ncities,result ,dists);       
-        % convert to adjacency representation
-        pop(i,:) = path2adj(result); 
-      elseif isequal(REPRESENTATION,'path')
+        if isequal(REPRESENTATION,'adj')
+            result =   adj2path(pop(i,:));
+
+        elseif isequal(REPRESENTATION,'path')
             result = pop(i,:);
-            if isequal(HEURISTIC,'cross_elimination')            
-                % untangle small crosses
-                start = randi([1,ncities]);
-                SMALL=7;
-                for j= 0: ceil (ncities/SMALL) 
-                    result=Heuristic(x, y,result ,mod(start +SMALL*j,ncities),SMALL);
-                end 
-                %untangle large crosses 
-                LARGE= 40;
-                sniplength2=0;
-                if( ncities >= LARGE) 
-                    sniplength2=randi([SMALL,LARGE]);
-                else
-                sniplength2= randi([SMALL,ncities]);             
-                end
-                SampleAmount = ceil (ncities/LARGE); 
-                for k= 0: SampleAmount;
-                    start2 = randi([1,ncities]);
-                    result=Heuristic(x, y,result ,start2,sniplength2);     
-                end               
-            end  
-            % remove loops
-            pop(i,:)= improve_path(ncities,result ,dists);  
-      else
+        else
             error('Representation not implemented!'); 
-      end        
-     end
-     
-else
-         for i=1:popsize   
-             if isequal(REPRESENTATION,'adj')
-                result =   adj2path(pop(i,:));
-             if isequal(HEURISTIC,'cross_elimination')     
-                % untangle small crosses
-            start = randi([1,ncities]);
-            SMALL=7;
+        end    
+        if isequal(HEURISTIC,'cross_elimination')     
+            % untangle small crosses
+            start = randi([1,ncities]);         
             for j= 0: ceil (ncities/SMALL) 
                 result=Heuristic(x, y, result ,mod(start +SMALL*j,ncities),SMALL);
             end      
-           %untangle large crosses 
-           LARGE= 40;
-           sniplength2=0;
-           if( ncities >= LARGE) 
-             sniplength2=randi([SMALL,LARGE]);
-           else
-             sniplength2= randi([SMALL,ncities]);
-           end
-           SampleAmount = ceil (ncities/LARGE); 
-           for k= 0: SampleAmount
-            start2 = randi([1,ncities]);
-            result=Heuristic(x, y,result ,start2,sniplength2);     
-           end
-             end     
-        % convert to adjacency representation
-        pop(i,:) = path2adj(result); 
-      elseif isequal(REPRESENTATION,'path')
-            if isequal(HEURISTIC,'cross_elimination')
-                result = pop(i,:);
-                % untangle small crosses
-                start = randi([1,ncities]);
-                SMALL=7;
-                for j= 0: ceil (ncities/SMALL) 
-                    result=Heuristic(x, y,result ,mod(start +SMALL*j,ncities),SMALL);
-                end 
-                %untangle large crosses 
-                LARGE= 40;
-                sniplength2=0;
-                if( ncities >= LARGE) 
-                    sniplength2=randi([SMALL,LARGE]);
-                else
-                sniplength2= randi([SMALL,ncities]);             
-                end
-                SampleAmount = ceil (ncities/LARGE); 
-                for k= 0: SampleAmount;
-                    start2 = randi([1,ncities]);
-                    result=Heuristic(x, y,result ,start2,sniplength2);     
+%            %untangle large crosses 
+%            sniplength2=0;
+%            if( ncities >= LARGE) 
+%              sniplength2=randi([SMALL,LARGE]);
+%            else
+%              sniplength2= randi([SMALL,ncities]);
+%            end
+%            SampleAmount = ceil (ncities/LARGE); 
+%            for k= 0: SampleAmount
+%             start2 = randi([1,ncities]);
+%             result=Heuristic(x, y,result ,mod(start2+sniplength2*k,ncities),sniplength2);     
+%            end
+        end
+        if (improve)
+            % remove loops
+            result = improve_path(ncities,result ,dists);
+            % three opt 
+            irand = randi([2,ncities-4]); 
+            for j = irand+2 : ncities-2
+                for k= j+2 : ncities+1
+                    ThreeOpt(x,y,result,irand,j,k);
                 end
             end    
-      else
-            error('Representation not implemented!'); 
-      end        
+            %jrand = randi([irand+2,ncities-2]);      end
+            %krand =  randi([jrand+2,ncities+1]
+            %ThreeOpt(x,y,result,irand,jrand,krand);
+            % reconvert to adjacency representation
+        end
+        if isequal(REPRESENTATION,'adj')
+            pop(i,:) = path2adj(result);    
+        
+        else 
+           pop(i,:) = result;  
+        end        
      end
-    
-     
-end
-
-
-
 newpop = pop;    
 end
 

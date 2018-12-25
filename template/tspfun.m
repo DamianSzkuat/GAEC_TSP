@@ -8,10 +8,12 @@
 %
 
 function ObjVal = tspfun(Phen, Dist, REPRESENTATION);
+    
+
     if isequal(REPRESENTATION,'path')
         for i=1:size(Phen,1)
             Phen(i,:) = path2adj(Phen(i,:));
-        end
+         end
     elseif isequal(REPRESENTATION,'adj') == 0
         error('Representation not implemented!'); 
     end
@@ -23,3 +25,4 @@ function ObjVal = tspfun(Phen, Dist, REPRESENTATION);
 end
     % End of function
 
+ 

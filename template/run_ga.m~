@@ -114,11 +114,10 @@ function run_ga(x, y, NIND, MAXGEN, NVAR, ELITIST, STOP_PERCENTAGE, PR_CROSS, PR
         	ObjVSel = tspfun(SelCh(:,1:NVAR),Dist,REPRESENTATION);
             %reinsert offspring into population
         	[Chrom ObjV]=reinsMuLambda(Chrom,SelCh,1,1,ObjV,ObjVSel,TABU);
-            bla =size(Chrom)
-            blu = size( ObjV)
+            bla =Chrom 
+            blu = ObjV
             Chrom(:,1:NVAR) = tsp_ImprovePopulation(NIND, NVAR, Chrom(:,1:NVAR), LOCALLOOP, Dist, REPRESENTATION, x, y, HEURISTIC);
                 %increment generation counter  
-        	bli= size(Chrom)
-           gen=gen+1
+        	gen=gen+1;
         end
 end

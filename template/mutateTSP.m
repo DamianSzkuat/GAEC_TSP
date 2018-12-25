@@ -16,25 +16,39 @@
 %                after mutation in the same format as OldChrom.
 
 
-function NewChrom = mutateTSP(MUT_F, OldChrom, MutOpt, REPRESENTATION);
-
+function NewChrom = mutateTSP(MUT_F, OldChrom, MutOpt, REPRESENTATION,TABU)
 % Check parameter consistency
    if nargin < 2,  error('Not enough input parameters'); end
 
-[rows,cols]=size(OldChrom);
+TABULENGTH = 2;
+OldChromSize = size(OldChrom); 
+rows = OldChromSize(1);
+cols = OldChromSize(2);
+CHROMOSOMELENGTH= cols-TABULENGTH-1;
+
 NewChrom=OldChrom;
 
 for r=1:rows
-	if rand<MutOpt
-        if isequal(REPRESENTATION,'adj')
-            NewChrom(r,:) = feval(MUT_F, OldChrom(r,:),1);
-        elseif isequal(REPRESENTATION,'path')
-            NewChrom(r,:) = feval(MUT_F, OldChrom(r,:),2);
+    if rand<MutOpt
+        if isequal(TABU,'Yes')  
+            if isequal(REPRESENTATION,'adj')
+                NewChrom(r,:) = [feval(MUT_F, OldChrom(r,1:CHROMOSOMELENGTH),1),OldChrom(r,CHROMOSOMELENGTH+1: cols) ];
+            elseif isequal(REPRESENTATION,'path')
+                NewChrom(r,:) = [feval(MUT_F, OldChrom(r,1:CHROMOSOMELENGTH),2), OldChrom(r,CHROMOSOMELENGTH+1: cols)];
+            else
+                error('Representation not implemented!'); 
+            end
         else
-            error('Representation not implemented!'); 
-        end  
-	end
+            if isequal(REPRESENTATION,'adj')
+                NewChrom(r,:) = feval(MUT_F, OldChrom(r,:),1);
+            elseif isequal(REPRESENTATION,'path')
+                NewChrom(r,:) = feval(MUT_F, OldChrom(r,:),2);
+            else
+                error('Representation not implemented!'); 
+            end
+        end
+    end
 end
 
 % End of function
-
+end
