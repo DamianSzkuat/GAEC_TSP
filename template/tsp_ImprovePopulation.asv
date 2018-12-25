@@ -27,20 +27,17 @@ for i=1:popsize
         end
         % remove loops
         if (improve) 
-            result = improve_path(ncities, result, dists);   
+            result = improve_path(ncities,result ,dists);   
         end
         % convert to adjacency representation
         pop(i,:) = path2adj(result);
     elseif isequal(REPRESENTATION,'path')
         result = pop(i,:);
         if isequal(HEURISTIC,'cross_elimination')                          
-            result = cross_elimination(x, y, result, ncities);
+            result = cross_elimination(x, y, result, ncities)        
         end  
         % remove loops
-        if (improve) 
-            result = improve_path(ncities, result, dists);   
-        end
-        pop(i,:) = result;
+        pop(i,:)= improve_path(ncities,result ,dists);  
     else
     error('Representation not implemented!'); 
     end        
