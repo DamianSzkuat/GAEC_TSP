@@ -1,6 +1,6 @@
 % Sequenctial Constructive Crossover (PMX) for TSP 
 % 
-% Syntax: NewChrom = pmx(OldChrom, XOVR, OffspringSize)
+% Syntax: NewChrom = pmx(OldChrom, XOVR)
 %
 % Input parameters: 
 %    OldChrom  - Matrix containing the chromosomes of the old
@@ -16,87 +16,37 @@
 %                in the same format as OldChrom.
 %
 
-function NewChrom = scxMuLambda(OldChrom, XOVR, Distances,TABU,OffspringSize)
-TABULENGTH = 2;
-OldChromSize = size(OldChrom); 
-rows = 3*OldChromSize(1);
-cols = OldChromSize(2);
-CHROMOSOMELENGTH= cols-TABULENGTH;
-%[rows,cols]=size(OldChrom);
+function NewChrom = scx(OldChrom, XOVR, Distances)
 
-
+[rows,cols]=size(OldChrom);
+maxrows = rows;
+if rem(rows,2)~=0
+    maxrows=maxrows-1;
 end
-NewChrom=[];
-counter= 1;
-while Newchrom < rows
-    
-    
-    %Randomly select two Offspring for mating
+
+for row = 1:2:maxrows 
     % crossover of the two chromosomes
    	% results in 2 offsprings
-   
-    if isequal(TABU,'Yes')
-            parentindex1 = rand([1,OldChromSize(1)]);
-            parentindex2 =  rand([1,OldChromSize(1)]);
-            parent1 = OldChrom(parentindex1,:);
-            parent2= OldChrom(parentindex2,:);
+	if rand<XOVR			% recombine with a given probability
+		NewChrom(row,:) = sequential_constructive_cross([OldChrom(row,:);OldChrom(row+1,:)], Distances);
+        NewChrom(row+1,:)= sequential_constructive_cross([OldChrom(row+1,:);OldChrom(row,:)], Distances);
         
-            if( (ismember(OldChrom(parentindex1,CHROMOSOMELENGTH +1), OldChrom(parentindex2, CHROMOSOMELENGTH +1 :cols) )) || (ismember(OldChrom(parentindex2,CHROMOSOMELENGTH +1), OldChrom(parentindex1, CHROMOSOMELENGTH +1 :cols))))
-                bar = XOVR/5;
-            else
-                bar = XOVR
-            end    
-            if rand<bar			
-            % recombine with a given probability   
-            % check whether the offspring will be tabu:
-            % this occurs when the first allel of a parent occurs in the
-            % tabu list of the other parent.
-            % Tabu children -last index = -1 - are not allowed to survive (implemented in reins.m), 
-            % unless their fitness value is greater than that of the best among
-            % the parental generation.
-                if( (ismember(OldChrom(parentindex1,CHROMOSOMELENGTH +1), OldChrom(parentindex2, CHROMOSOMELENGTH +1 :cols) )) || (ismember(OldChrom(parentindex2,CHROMOSOMELENGTH +1), OldChrom(parentindex1, CHROMOSOMELENGTH +1 :cols))))
-
-                    NewChrom(counter,cols+1)= -1;
-                    if(counter ~= rows-1)
-                        NewChrom(counter+1, cols+1)= -1;           
-                    end    
-                else   %not tabu, last index = 0.
-                   NewChrom(counter,cols+1)= 0;
-                    if(counter ~= rows-1)
-                        NewChrom(counter+1, cols+1)= 0;
-                    end    
-                end
-            
-                % mate
-                NewChrom(counter,1:CHROMOSOMELENGTH) = sequential_constructive_cross([parent1(1, 1:CHROMOSOMELENGTH);parent2(1, 1:CHROMOSOMELENGTH)], Distances);
-                if(counter ~= rows-1)
-                    NewChrom(counter+1,1:CHROMOSOMELENGTH)= sequential_constructive_cross([parent2(1, 1:CHROMOSOMELENGTH);parent1(1, 1:CHROMOSOMELENGTH)], Distances);
-                end    
-                %make tabulist for offspring
-                NewChrom(counter, CHROMOSOMELENGTH +1: CHROMOSOMELENGTH + TABULENGTH) = [parent1(CHROMOSOMELENGTH +1),parent2(CHROMOSOMELENGTH +1)];%,parent1(CHROMOSOMELENGTH +2),parent2(CHROMOSOMELENGTH +2)]; 
-                 if(counter ~= rows-1)
-                    NewChrom(counter+1, CHROMOSOMELENGTH +1: CHROMOSOMELENGTH +TABULENGTH) = [parent2(CHROMOSOMELENGTH +1),parent1(CHROMOSOMELENGTH +1)];%,parent2(CHROMOSOMELENGTH +2),parent1(CHROMOSOMELENGTH +2)]; 
-                 end
-           end  
-          counter = counter +2;
-        end
-     else       
-  
-             if rand<XOVR	
-                 % mate
-                 NewChrom(row,:) = sequential_constructive_cross([parent1(1,:);parent2(1, :)], Distances);
-                 if(counter ~= rows-1)
-                 NewChrom(row+1,:)= sequential_constructive_cross([parent2(1, :);parent1(1, :)], Distances);              
-                 end
-             else
-                 NewChrom(row,:) = OldChrom(row,:);
-                 if(counter ~= rows-1)
-                    NewChrom(row+1,:) = OldChrom(row+1,:); 
-                 end   
-             end     
-             counter = counter +2;
-     end       
+        % Since the order of parents does not matter for scx we avoid
+        % making two of the same offpsring and randomly keep one of the
+        % parents in the population 
+		%NewChrom(row+1,:)= OldChrom(row+round(rand),:);
+        
+        % Use pmx to create a second offspring, order of parents is chosen
+        % randomly 
+        % if round(rand)
+        %     NewChrom(row+1,:) = cross_partially_mapped([OldChrom(row,:);OldChrom(row+1,:)]);
+        % else 
+        %     NewChrom(row+1,:) = cross_partially_mapped([OldChrom(row+1,:);OldChrom(row,:)]);
+        % end 
+    else
+		NewChrom(row,:) = OldChrom(row,:);
+		NewChrom(row+1,:) = OldChrom(row+1,:);
+	end
 end 
 
 end
-

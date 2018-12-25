@@ -98,11 +98,11 @@ crosssliderv = uicontrol(ph,'Style','text','String',round(PR_CROSS*100),'Positio
 elitslidertxt = uicontrol(ph,'Style','text','String','% elite','Position',[0 80 130 20]);
 elitslider = uicontrol(ph,'Style','slider','Max',100,'Min',0,'Value',round(ELITIST*100),'Sliderstep',[0.01 0.05],'Position',[130 80 150 20],'Callback',@elitslider_Callback);
 elitsliderv = uicontrol(ph,'Style','text','String',round(ELITIST*100),'Position',[280 80 50 20]);
-crossover = uicontrol(ph,'Style','popupmenu', 'String',{'xalt_edges', 'pmx', 'scxMuLambda'}, 'Value',1,'Position',[10 50 130 20],'Callback',@crossover_Callback);
-representation = uicontrol(ph,'Style','popupmenu', 'String',{'adj', 'path'}, 'Value',1,'Position',[150 50 130 20],'Callback',@representation_Callback);
+crossover = uicontrol(ph,'Style','popupmenu', 'String',{'scx', 'xalt_edges', 'pmx', 'scxMuLambda'}, 'Value',1,'Position',[10 50 130 20],'Callback',@crossover_Callback);
+representation = uicontrol(ph,'Style','popupmenu', 'String',{'path', 'adj'}, 'Value',1,'Position',[150 50 130 20],'Callback',@representation_Callback);
 heuristic = uicontrol(ph,'Style','popupmenu', 'String',{'None', 'cross_elimination'}, 'Value',1,'Position',[290 50 130 20],'Callback',@heuristic_Callback);
 tabutxt = uicontrol(ph,'Style','text','String','Tabu ','Position',[180 15 130 20]);
-tabu = uicontrol(ph,'Style','popupmenu', 'String',{'None', 'Yes'}, 'Value',1,'Position',[290 20 130 20],'Callback',@tabu_Callback);
+tabu = uicontrol(ph,'Style','popupmenu', 'String',{'No', 'Yes'}, 'Value',1,'Position',[290 20 130 20],'Callback',@tabu_Callback);
 
 %inputbutton = uicontrol(ph,'Style','pushbutton','String','Input','Position',[55 10 70 30],'Callback',@inputbutton_Callback);
 runbutton = uicontrol(ph,'Style','pushbutton','String','START','Position',[0 10 50 30],'Callback',@runbutton_Callback);

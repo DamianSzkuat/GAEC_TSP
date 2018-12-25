@@ -54,9 +54,9 @@ function run_ga(x, y, NIND, MAXGEN, NVAR, ELITIST, STOP_PERCENTAGE, PR_CROSS, PR
             Chrom=zeros(NIND,NVAR);
             for row=1:NIND
                 if isequal(REPRESENTATION,'adj')
-                        Chrom(row,:)=path2adj(randperm(NVAR));  
+                    Chrom(row,:)=path2adj(randperm(NVAR));  
                 elseif isequal(REPRESENTATION,'path')
-                        Chrom(row,:)=randperm(NVAR);                    
+                    Chrom(row,:)=randperm(NVAR);                    
                 else
                     error('Representation not implemented!'); 
                 end       
@@ -66,8 +66,13 @@ function run_ga(x, y, NIND, MAXGEN, NVAR, ELITIST, STOP_PERCENTAGE, PR_CROSS, PR
         gen=0;
         % number of individuals of equal fitness needed to stop
         stopN=ceil(STOP_PERCENTAGE*NIND);
+        
         % evaluate initial population
+        % Original: 
+        % ObjV = tspfun(Chrom,Dist,REPRESENTATION);
+        % New: 
         ObjV = tspfun(Chrom(:,1:NVAR),Dist,REPRESENTATION);
+        
         best=zeros(1,MAXGEN);
         % generational loop
         while gen<MAXGEN
@@ -82,8 +87,14 @@ function run_ga(x, y, NIND, MAXGEN, NVAR, ELITIST, STOP_PERCENTAGE, PR_CROSS, PR
                 end
             end
             if isequal(REPRESENTATION,'adj')
+                % Original: 
+                % ObjV = visualizeTSP(x,y,adj2path(Chrom(t,:)), minimum, ah1, gen, best, mean_fits, worst, ah2, ObjV, NIND, ah3);
+                % New:
                 visualizeTSP(x,y,adj2path(Chrom(t,1:NVAR)), minimum, ah1, gen, best, mean_fits, worst, ah2, ObjV, NIND, ah3);
             elseif isequal(REPRESENTATION,'path')
+                % Original: 
+                % ObjV = visualizeTSP(x,y,Chrom(t,:), minimum, ah1, gen, best, mean_fits, worst, ah2, ObjV, NIND, ah3);
+                % New:
                 visualizeTSP(x,y,Chrom(t,1:NVAR), minimum, ah1, gen, best, mean_fits, worst, ah2, ObjV, NIND, ah3);
             else
                 error('Representation not implemented!'); 

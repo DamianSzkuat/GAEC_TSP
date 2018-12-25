@@ -1,4 +1,4 @@
-% Sequenctial Constructive Crossover (PMX) for TSP 
+% Sequenctial Constructive Crossover (SCX) for TSP 
 % 
 % Syntax: NewChrom = pmx(OldChrom, XOVR, OffspringSize)
 %
