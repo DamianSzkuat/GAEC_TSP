@@ -32,9 +32,9 @@ for row = 1:2:maxrows
         NewChrom(row+1,:)= sequential_constructive_cross([OldChrom(row+1,:);OldChrom(row,:)], Distances);
         
         % Since the order of parents does not matter for scx we avoid
-        % making two of the same offpsring and randomly keep one of the
-        % parents in the population 
-		%NewChrom(row+1,:)= OldChrom(row+round(rand),:);
+        % making two of the same offpsring we add a completelly new 
+        % random child to the population
+		% NewChrom(row+1,:)= randperm(cols);
         
         % Use pmx to create a second offspring, order of parents is chosen
         % randomly 
