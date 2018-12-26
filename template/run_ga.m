@@ -65,9 +65,9 @@ function run_ga(x, y, NIND, MAXGEN, NVAR, ELITIST, STOP_PERCENTAGE, PR_CROSS, PR
                 error('Representation not implemented!'); 
             end 
             
-            if (sObjV(stopN)-sObjV(1) <= 1e-15)
-                  break;
-            end
+            % if (sObjV(stopN)-sObjV(1) <= 1e-15)
+            %       break;
+            % end
             
         	%assign fitness values to entire population
         	FitnV=ranking(ObjV);
