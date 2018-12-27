@@ -30,10 +30,7 @@ LARGE = 40;
         else
             error('Representation not implemented!'); 
         end    
-        if isequal(HEURISTIC,'cross_elimination')  
-            
-       
-            
+        if isequal(HEURISTIC,'cross_elimination')     
             % untangle small crosses
             start = randi([1,ncities]);         
             for j= 0: ceil (ncities/SMALL) 
@@ -57,19 +54,19 @@ LARGE = 40;
           % remove loops
             result = improve_path(ncities,result ,dists);
             
-%             %reconvert to adjacency representation
-%             % three opt 
-%             
-%              irand = randi([2,ncities-4]); 
-%             jrand = randi([irand+2,ncities-2]);    
-%             krand =  randi([jrand+2,ncities+1]);
-%             result= ThreeOpt(x,y,result,irand,jrand,krand);
-%             
-%             % untangle small crosses
-%             start = randi([1,ncities]);         
-%             for j= 0: ceil (ncities/SMALL) 
-%                 result=Heuristic(x, y, result ,mod(start +SMALL*j,ncities),SMALL);
-%             end  
+            %reconvert to adjacency representation
+            % three opt 
+            
+             irand = randi([2,ncities-4]); 
+            jrand = randi([irand+2,ncities-2]);    
+            krand =  randi([jrand+2,ncities+1]);
+            result= ThreeOpt(x,y,result,irand,jrand,krand);
+            
+            % untangle small crosses
+            start = randi([1,ncities]);         
+            for j= 0: ceil (ncities/SMALL) 
+                result=Heuristic(x, y, result ,mod(start +SMALL*j,ncities),SMALL);
+            end  
               
         end
         if isequal(REPRESENTATION,'adj')

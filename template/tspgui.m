@@ -11,10 +11,11 @@ GGAP=1-ELITIST;		% Generation gap
 STOP_PERCENTAGE=.95;    % percentage of equal fitness individuals for stopping
 PR_CROSS=.95;     % probability of crossover
 PR_MUT=.05;       % probability of mutation
-LOCALLOOP=1;      % local loop removal
+LOCALLOOP=0;      % local loop removal
 REPRESENTATION = 'path'; % default representation
 CROSSOVER = 'scx';  % default crossover operator
 HEURISTIC = 'None' % Extra heuristic is off by default
+TABU = 'None' % No tabu by default
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % read an existing population
@@ -78,7 +79,7 @@ ph = uipanel('Parent',fh,'Title','Settings','Position',[.55 .05 .45 .45]);
 datasetpopuptxt = uicontrol(ph,'Style','text','String','Dataset','Position',[0 260 130 20]);
 datasetpopup = uicontrol(ph,'Style','popupmenu','String',datasets,'Value',1,'Position',[130 260 130 20],'Callback',@datasetpopup_Callback);
 llooppopuptxt = uicontrol(ph,'Style','text','String','Loop Detection','Position',[260 260 130 20]);
-llooppopup = uicontrol(ph,'Style','popupmenu','String',{'on','off'},'Value',1,'Position',[390 260 50 20],'Callback',@llooppopup_Callback); 
+llooppopup = uicontrol(ph,'Style','popupmenu','String',{'off','on'},'Value',1,'Position',[390 260 50 20],'Callback',@llooppopup_Callback); 
 ncitiesslidertxt = uicontrol(ph,'Style','text','String','# Cities','Position',[0 230 130 20]);
 %ncitiesslider = uicontrol(ph,'Style','slider','Max',128,'Min',4,'Value',NVAR,'Sliderstep',[0.012 0.05],'Position',[130 230 150 20],'Callback',@ncitiesslider_Callback);
 ncitiessliderv = uicontrol(ph,'Style','text','String',NVAR,'Position',[280 230 50 20]);
@@ -88,7 +89,7 @@ nindsliderv = uicontrol(ph,'Style','text','String',NIND,'Position',[280 200 50 2
 genslidertxt = uicontrol(ph,'Style','text','String','# Generations','Position',[0 170 130 20]);
 genslider = uicontrol(ph,'Style','slider','Max',1000,'Min',10,'Value',MAXGEN,'Sliderstep',[0.001 0.05],'Position',[130 170 150 20],'Callback',@genslider_Callback);
 gensliderv = uicontrol(ph,'Style','text','String',MAXGEN,'Position',[280 170 50 20]);
-mutslidertxt = uicontrol(ph,'Style','text','String','Pr. Mutation','Position',[0 140 130 20]);
+mutslidertxt = uicontrol(ph,'Style','text','String','Pr. Mutation','Position',[0 140 130 20])
 mutslider = uicontrol(ph,'Style','slider','Max',100,'Min',0,'Value',round(PR_MUT*100),'Sliderstep',[0.01 0.05],'Position',[130 140 150 20],'Callback',@mutslider_Callback);
 mutsliderv = uicontrol(ph,'Style','text','String',round(PR_MUT*100),'Position',[280 140 50 20]);
 crossslidertxt = uicontrol(ph,'Style','text','String','Pr. Crossover','Position',[0 110 130 20]);
@@ -97,9 +98,12 @@ crosssliderv = uicontrol(ph,'Style','text','String',round(PR_CROSS*100),'Positio
 elitslidertxt = uicontrol(ph,'Style','text','String','% elite','Position',[0 80 130 20]);
 elitslider = uicontrol(ph,'Style','slider','Max',100,'Min',0,'Value',round(ELITIST*100),'Sliderstep',[0.01 0.05],'Position',[130 80 150 20],'Callback',@elitslider_Callback);
 elitsliderv = uicontrol(ph,'Style','text','String',round(ELITIST*100),'Position',[280 80 50 20]);
-crossover = uicontrol(ph,'Style','popupmenu', 'String',{'scx', 'xalt_edges', 'pmx'}, 'Value',1,'Position',[10 50 130 20],'Callback',@crossover_Callback);
-representation = uicontrol(ph,'Style','popupmenu', 'String',{'path', 'adj'}, 'Value',1,'Position',[150 50 130 20],'Callback',@representation_Callback);
+crossover = uicontrol(ph,'Style','popupmenu', 'String',{'xalt_edges', 'pmx', 'scxMuLambda'}, 'Value',1,'Position',[10 50 130 20],'Callback',@crossover_Callback);
+representation = uicontrol(ph,'Style','popupmenu', 'String',{'adj', 'path'}, 'Value',1,'Position',[150 50 130 20],'Callback',@representation_Callback);
 heuristic = uicontrol(ph,'Style','popupmenu', 'String',{'None', 'cross_elimination'}, 'Value',1,'Position',[290 50 130 20],'Callback',@heuristic_Callback);
+tabutxt = uicontrol(ph,'Style','text','String','Tabu ','Position',[180 15 130 20]);
+tabu = uicontrol(ph,'Style','popupmenu', 'String',{'None', 'Yes'}, 'Value',1,'Position',[290 20 130 20],'Callback',@tabu_Callback);
+
 %inputbutton = uicontrol(ph,'Style','pushbutton','String','Input','Position',[55 10 70 30],'Callback',@inputbutton_Callback);
 runbutton = uicontrol(ph,'Style','pushbutton','String','START','Position',[0 10 50 30],'Callback',@runbutton_Callback);
 
@@ -187,6 +191,12 @@ set(fh,'Visible','on');
         HEURISTIC = heuristics(heuristic_value);
         HEURISTIC = HEURISTIC{1};
     end
+        function tabu_Callback(hObject,eventdata)
+        tabu_value = get(hObject,'Value');
+        tabus = get(hObject,'String');
+        TABU = tabus(tabu_value);
+        TABU = TABU{1};
+    end
     function runbutton_Callback(hObject,eventdata)
         %set(ncitiesslider, 'Visible','off');
         set(nindslider,'Visible','off');
@@ -194,7 +204,7 @@ set(fh,'Visible','on');
         set(mutslider,'Visible','off');
         set(crossslider,'Visible','off');
         set(elitslider,'Visible','off');
-        run_ga(x, y, NIND, MAXGEN, NVAR, ELITIST, STOP_PERCENTAGE, PR_CROSS, PR_MUT, REPRESENTATION, CROSSOVER, HEURISTIC, LOCALLOOP, ah1, ah2, ah3);
+        run_ga(x, y, NIND, MAXGEN, NVAR, ELITIST, STOP_PERCENTAGE, PR_CROSS, PR_MUT, REPRESENTATION, CROSSOVER, HEURISTIC,TABU, LOCALLOOP, ah1, ah2, ah3);
         end_run();
     end
     function inputbutton_Callback(hObject,eventdata)

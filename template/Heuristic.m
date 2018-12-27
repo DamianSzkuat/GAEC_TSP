@@ -4,7 +4,7 @@ function [Betterpath] = Heuristic(X, Y, Path,START,SNIPPETLENGTH,small)
 %HEURISTIC
 %   This heuristic reduces the cost of a path by removing the crossing (if any)
 %   with the largest cost attached to it.
-SMALL =7;
+SMALL =15;
 OriginalPath = Path;
 % We orden the coordinates according to the given path.
 Xpath = X(Path); Ypath= Y(Path);
@@ -109,3 +109,5 @@ if(SNIPPETLENGTH>SMALL)
 end
 %end of function    
 end
+
+     

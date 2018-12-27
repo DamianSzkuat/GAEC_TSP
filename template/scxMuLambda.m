@@ -16,35 +16,31 @@
 %                in the same format as OldChrom.
 %
 
-function NewChrom = scxMuLambda(OldChrom, XOVR, Distances,TABU,OffspringSize)
-TABULENGTH = 2;
-OldChromSize = size(OldChrom); 
-rows = 3*OldChromSize(1);
+function NewChrom = scxMuLambda(OldChrom, XOVR, Distances,TABU)
+TABULENGTH = 4;
+OldChromSize = size(OldChrom) ;
+rows = 7*OldChromSize(1);
 cols = OldChromSize(2);
 CHROMOSOMELENGTH= cols-TABULENGTH;
 %[rows,cols]=size(OldChrom);
 
 
-end
+
 NewChrom=[];
 counter= 1;
-while Newchrom < rows
-    
-    
+if isequal(TABU,'Yes')
+    while counter < rows    
     %Randomly select two Offspring for mating
     % crossover of the two chromosomes
    	% results in 2 offsprings
-   
-    if isequal(TABU,'Yes')
-            parentindex1 = rand([1,OldChromSize(1)]);
-            parentindex2 =  rand([1,OldChromSize(1)]);
+            parentindex1 = randi([1,OldChromSize(1)]);
+            parentindex2 =  randi([1,OldChromSize(1)]);
             parent1 = OldChrom(parentindex1,:);
-            parent2= OldChrom(parentindex2,:);
-        
+            parent2= OldChrom(parentindex2,:);        
             if( (ismember(OldChrom(parentindex1,CHROMOSOMELENGTH +1), OldChrom(parentindex2, CHROMOSOMELENGTH +1 :cols) )) || (ismember(OldChrom(parentindex2,CHROMOSOMELENGTH +1), OldChrom(parentindex1, CHROMOSOMELENGTH +1 :cols))))
-                bar = XOVR/5;
+                bar = XOVR/10;
             else
-                bar = XOVR
+                bar = XOVR;
             end    
             if rand<bar			
             % recombine with a given probability   
@@ -55,7 +51,6 @@ while Newchrom < rows
             % unless their fitness value is greater than that of the best among
             % the parental generation.
                 if( (ismember(OldChrom(parentindex1,CHROMOSOMELENGTH +1), OldChrom(parentindex2, CHROMOSOMELENGTH +1 :cols) )) || (ismember(OldChrom(parentindex2,CHROMOSOMELENGTH +1), OldChrom(parentindex1, CHROMOSOMELENGTH +1 :cols))))
-
                     NewChrom(counter,cols+1)= -1;
                     if(counter ~= rows-1)
                         NewChrom(counter+1, cols+1)= -1;           
@@ -65,23 +60,25 @@ while Newchrom < rows
                     if(counter ~= rows-1)
                         NewChrom(counter+1, cols+1)= 0;
                     end    
-                end
-            
+                end           
                 % mate
                 NewChrom(counter,1:CHROMOSOMELENGTH) = sequential_constructive_cross([parent1(1, 1:CHROMOSOMELENGTH);parent2(1, 1:CHROMOSOMELENGTH)], Distances);
                 if(counter ~= rows-1)
                     NewChrom(counter+1,1:CHROMOSOMELENGTH)= sequential_constructive_cross([parent2(1, 1:CHROMOSOMELENGTH);parent1(1, 1:CHROMOSOMELENGTH)], Distances);
                 end    
                 %make tabulist for offspring
-                NewChrom(counter, CHROMOSOMELENGTH +1: CHROMOSOMELENGTH + TABULENGTH) = [parent1(CHROMOSOMELENGTH +1),parent2(CHROMOSOMELENGTH +1)];%,parent1(CHROMOSOMELENGTH +2),parent2(CHROMOSOMELENGTH +2)]; 
+                NewChrom(counter, CHROMOSOMELENGTH +1: CHROMOSOMELENGTH + TABULENGTH) = [parent1(CHROMOSOMELENGTH +1),parent2(CHROMOSOMELENGTH +1),parent1(CHROMOSOMELENGTH +2),parent2(CHROMOSOMELENGTH +2)]; 
                  if(counter ~= rows-1)
-                    NewChrom(counter+1, CHROMOSOMELENGTH +1: CHROMOSOMELENGTH +TABULENGTH) = [parent2(CHROMOSOMELENGTH +1),parent1(CHROMOSOMELENGTH +1)];%,parent2(CHROMOSOMELENGTH +2),parent1(CHROMOSOMELENGTH +2)]; 
-                 end
-           end  
-          counter = counter +2;
-        end
-     else       
-  
+                    NewChrom(counter+1, CHROMOSOMELENGTH +1: CHROMOSOMELENGTH +TABULENGTH) = [parent2(CHROMOSOMELENGTH +1),parent1(CHROMOSOMELENGTH +1),parent2(CHROMOSOMELENGTH +2),parent1(CHROMOSOMELENGTH +2)]; 
+                 end            
+                counter = counter +2;
+            end   
+    end
+    
+else       
+   for row = 1:2:maxrows 
+            parent1 = OldChrom(row,:);
+            parent2= OldChrom(row+1,:);    
              if rand<XOVR	
                  % mate
                  NewChrom(row,:) = sequential_constructive_cross([parent1(1,:);parent2(1, :)], Distances);
@@ -95,7 +92,7 @@ while Newchrom < rows
                  end   
              end     
              counter = counter +2;
-     end       
+   end            
 end 
 
 end
