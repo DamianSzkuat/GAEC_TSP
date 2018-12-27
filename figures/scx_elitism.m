@@ -4,7 +4,7 @@ X = [5 10 15 20 25];
 
 plot(X,A)
 %clear title xlabel ylabel
-axis([5 25 0 60])
+axis([5 25 10 15])
 xlabel('% Elitism')
 ylabel('Shortest path length')
 title('Effects of elitism')
