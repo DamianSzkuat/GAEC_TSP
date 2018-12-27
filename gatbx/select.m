@@ -24,7 +24,7 @@
 % Author:     Hartmut Pohlheim
 % History:    10.03.94     file created
 
-function SelCh = select(SEL_F, Chrom, FitnV, GGAP, SUBPOP);
+function SelCh = select(SEL_F, Chrom, FitnV, GGAP, SUBPOP)
 
 % Check parameter consistency
    if nargin < 3, error('Not enough input parameter'); end
@@ -58,11 +58,10 @@ function SelCh = select(SEL_F, Chrom, FitnV, GGAP, SUBPOP);
 
 % Select individuals from population
    SelCh = [];
-   for irun = 1:SUBPOP,
+   for irun = 1:SUBPOP
       FitnVSub = FitnV((irun-1)*Nind+1:irun*Nind);
       ChrIx=feval(SEL_F, FitnVSub, NSel)+(irun-1)*Nind;
       SelCh=[SelCh; Chrom(ChrIx,:)];
    end
  
-
 % End of function

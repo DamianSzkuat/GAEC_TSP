@@ -2,7 +2,7 @@
 %
 % This function reinserts offspring in the population.
 %
-% Syntax: [Chrom, ObjVCh] = reins(Chrom, SelCh, SUBPOP, InsOpt, ObjVCh, ObjVSel)
+% Syntax: [Chrom, ObjVCh] = reins(Chrom, SelCh, SUBPOP, InsOpt, ObjVCh, ObjVSel,TABU)
 %
 % Input parameters:
 %    Chrom     - Matrix containing the individuals (parents) of the current
@@ -39,7 +39,7 @@
 % History:    10.03.94     file created
 %             19.03.94     parameter checking improved
 
-function [Chrom, ObjVCh] = reins(Chrom, SelCh, SUBPOP, InsOpt, ObjVCh, ObjVSel);
+function [Chrom, ObjVCh] = reins(Chrom, SelCh, SUBPOP, InsOpt, ObjVCh, ObjVSel,TABU);
 
 
 % Check parameter consistency
@@ -95,28 +95,61 @@ function [Chrom, ObjVCh] = reins(Chrom, SelCh, SUBPOP, InsOpt, ObjVCh, ObjVSel);
    if (Select == 1 & IsObjVCh == 0), error('ObjVCh for fitness-based exchange needed'); end
 
    if INSR == 0, return; end
-   NIns = min(max(floor(INSR*NSEL+.5),1),NIND);   % Number of offspring to insert   
-
-% perform insertion for each subpopulation
-   for irun = 1:SUBPOP,
+   % perform insertion for each subpopulation
+   for irun = 1:SUBPOP
       % Calculate positions in old subpopulation, where offspring are inserted
-         if Select == 1,    % fitness-based reinsertion
+         if Select == 1    % fitness-based reinsertion
             [Dummy, ChIx] = sort(-ObjVCh((irun-1)*NIND+1:irun*NIND));
          else               % uniform reinsertion
             [Dummy, ChIx] = sort(rand(NIND,1));
          end
-         PopIx = ChIx((1:NIns)')+ (irun-1)*NIND;
+         
+        if isequal(TABU,'Yes')
+            % We cut down the number of offspring to the ones which are not tabu and
+            % the ones which are tabu BUT have a better fitness value than the best 
+            % candidate solution of the previous generation.
+   
+            %best of the previous generation
+            
+            BObjVCh=  ObjVCh(ChIx(length(ObjVCh)));
+ 
+            ObjVSelValid = [];
+            SelChValid= [];
+            
+            for i = 1: NindO
+                if ( ( SelCh(i,NvarO) == 0 ) || (ObjVSel(i) <= BObjVCh))
+                    SelChValid = [SelChValid;SelCh(i,:)];
+                    ObjVSelValid=[ObjVSelValid;ObjVSel(i)];
+                end               
+            end
+            SelChValid;
+            mean(ObjVSelValid)
+           [NSEL, cols] = size(SelChValid);
+           ObjVSel= ObjVSelValid;
+        end
+        % Number of offspring to insert    
+        NIns = min(max(floor(INSR*NSEL+.5),1),NIND);   
+        PopIx = ChIx((1:NIns)')+ (irun-1)*NIND;
       % Calculate position of Nins-% best offspring
-         if (NIns < NSEL),  % select best offspring
-            [Dummy,OffIx] = sort(ObjVSel((irun-1)*NSEL+1:irun*NSEL));
+         if (NIns < NSEL)  % select best offspring
+            [~,OffIx] = sort(ObjVSel(NSEL));
          else              
             OffIx = (1:NIns)';
          end
          SelIx = OffIx((1:NIns)')+(irun-1)*NSEL;
-      % Insert offspring in subpopulation -> new subpopulation
-         Chrom(PopIx,:) = SelCh(SelIx,:);
-         if (IsObjVCh == 1 & IsObjVSel == 1), ObjVCh(PopIx) = ObjVSel(SelIx); end
-   end
+      % Insert offspring in subpopulation -> new subpopulation, omit the
+      % tabu variable
+        if isequal(TABU,'Yes')
+            if isempty(SelChValid)==0
+               Chrom(PopIx,:) = SelChValid(SelIx,1:cols-1);
+               if (IsObjVCh == 1 & IsObjVSel == 1), ObjVCh(PopIx) = ObjVSel(SelIx); end
+            end               
+        else 
+            Chrom(PopIx,:) = SelCh(SelIx,:);
+            if (IsObjVCh == 1 & IsObjVSel == 1), ObjVCh(PopIx) = ObjVSel(SelIx); end
+        end
 
+   end
+end
 
 % End of function
