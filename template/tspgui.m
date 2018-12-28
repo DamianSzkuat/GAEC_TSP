@@ -12,8 +12,8 @@ STOP_PERCENTAGE=.95;    % percentage of equal fitness individuals for stopping
 PR_CROSS=.95;     % probability of crossover
 PR_MUT=.05;       % probability of mutation
 LOCALLOOP=0;      % local loop removal
-REPRESENTATION = 'path'; % default representation
-CROSSOVER = 'scx';  % default crossover operator
+REPRESENTATION = 'adj'; % default representation
+CROSSOVER = 'xalt_edges';  % default crossover operator
 HEURISTIC = 'None' % Extra heuristic is off by default
 TABU = 'None' % No tabu by default
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

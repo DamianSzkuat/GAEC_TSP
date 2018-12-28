@@ -1,4 +1,4 @@
-% Sequenctial Constructive Crossover (PMX) for TSP 
+% Sequenctial Constructive Crossover (SCX) for TSP 
 % 
 % Syntax: NewChrom = pmx(OldChrom, XOVR, OffspringSize)
 %
@@ -29,7 +29,7 @@ CHROMOSOMELENGTH= cols-TABULENGTH;
 NewChrom=[];
 counter= 1;
 if isequal(TABU,'Yes')
-    while counter < rows    
+    while counter < rows
     %Randomly select two Offspring for mating
     % crossover of the two chromosomes
    	% results in 2 offsprings
@@ -76,13 +76,14 @@ if isequal(TABU,'Yes')
     end
     
 else    
-    
-    while counter < rows  
+    while counter < rows
             parentindex1 =  randi([1,OldChromSize(1)]);
             parentindex2 =  randi([1,OldChromSize(1)]);
             parent1 = OldChrom(parentindex1,:);
-            parent2= OldChrom(parentindex2,:);   
-        disp('test')
+            if round(rand)
+                parent2 = OldChrom(parentindex2,:);  
+            else 
+                parent2 = randperm(cols);
         % crossover of the two chromosomes
         % results in 2 offsprings
         if rand<XOVR			% recombine with a given probability
@@ -94,7 +95,7 @@ else
                 counter = counter +2;
         end    
     end
-end 
+end
 
 end
 

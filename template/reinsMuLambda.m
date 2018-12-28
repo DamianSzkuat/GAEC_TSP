@@ -171,11 +171,15 @@ function [Chrom, ObjVCh] = reinsMuLambda(Chrom, SelCh, SUBPOP, InsOpt, ObjVCh, O
         
         
      else
-            [~, OffIx] = sort(ObjVSel(1:NSEL));
-            SortedOffspring = SelCh(OffIx,:);
-            Chrom = SortedOffspring(1:NIND,:);
-            Sortedfitness =  ObjVSel(OffIx);
-            ObjVCh = Sortedfitness(1:NIND);
+            %[~, OffIx] = sort(ObjVSel(1:NSEL));
+            %SortedOffspring = SelCh(OffIx,:);
+            %Chrom = SortedOffspring(1:NIND,:);
+            %Sortedfitness =  ObjVSel(OffIx);
+            %ObjVCh = Sortedfitness(1:NIND);
+            %size(ObjVCh)
+            [Chrom, ObjVCh] = tournamentSelection(SelCh, ObjVSel, NIND);
+            %size(Chrom)
+            %size(ObjVCh)
    end       
     
 end
