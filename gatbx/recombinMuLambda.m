@@ -59,7 +59,7 @@ function NewChrom = recombinMuLambda(REC_F, Chrom, Distances, RecOpt,TABU)
       if isequal(REC_F,'scxMuLambda')
         NewChromSub = feval(REC_F, Chrom, RecOpt, Distances,TABU);
       else  
-        NewChromSub = feval(REC_F, Chrom, RecOpt);
+        NewChromSub = feval(REC_F, Chrom, RecOpt,Distances,TABU);
       end
       NewChrom=[NewChrom; NewChromSub];
    end
