@@ -144,7 +144,15 @@ function [Chrom, ObjVCh] = reinsMuLambda(Chrom, SelCh, SUBPOP, InsOpt, ObjVCh, O
             end
             Chrom = result;
             ObjVCh= fitsort(1:NindP);
-   
+   else
+       
+       
+       
+       
+       
+       
+       
+   end    
 %           if there are not enough valid offspring, fill the surviving
            % population with the best parents.
 %            if NValid < NindP
@@ -168,15 +176,6 @@ function [Chrom, ObjVCh] = reinsMuLambda(Chrom, SelCh, SUBPOP, InsOpt, ObjVCh, O
 %          Chrom = SelChValid(:,1:NvarO-1);
 %          ObjVCh= ObjVSelValid;
         %if (IsObjVCh == 1 && IsObjVSel == 1), ObjVCh(PopIx) = ObjVSel(SelIx); end
-        
-        
-     else
-            [~, OffIx] = sort(ObjVSel(1:NSEL));
-            SortedOffspring = SelCh(OffIx,:);
-            Chrom = SortedOffspring(1:NIND,:);
-            Sortedfitness =  ObjVSel(OffIx);
-            ObjVCh = Sortedfitness(1:NIND);
-   end       
     
 end
 

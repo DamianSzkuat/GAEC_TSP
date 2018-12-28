@@ -78,20 +78,30 @@ if isequal(TABU,'Yes')
 else    
     
     while counter < rows  
-            parentindex1 =  randi([1,OldChromSize(1)]);
             parentindex2 =  randi([1,OldChromSize(1)]);
-            parent1 = OldChrom(parentindex1,:);
-            parent2= OldChrom(parentindex2,:);   
-        disp('test')
+                    parentindex2 =  randi([1,OldChromSize(1)]);
+
         % crossover of the two chromosomes
         % results in 2 offsprings
         if rand<XOVR			% recombine with a given probability
-               % mate
-                NewChrom(counter,:) = sequential_constructive_cross([parent1(1, :);parent2(1,:)], Distances);
-                if(counter ~= rows-1)
-                    NewChrom(counter+1,:)= sequential_constructive_cross([parent2(1, :);parent1(1,:)], Distances);
-                end    
-                counter = counter +2;
+            NewChrom(row,:) = sequential_constructive_cross([OldChrom(row,:);OldChrom(row+1,:)], Distances);
+            NewChrom(row+1,:)= sequential_constructive_cross([OldChrom(row+1,:);OldChrom(row,:)], Distances);
+        
+            % Since the order of parents does not matter for scx we avoid
+            % making two of the same offpsring we add a completelly new 
+            % random child to the population
+            % NewChrom(row+1,:)= randperm(cols);
+        
+            % Use pmx to create a second offspring, order of parents is chosen
+            % randomly 
+            % if round(rand)
+            %           NewChrom(row+1,:) = cross_partially_mapped([OldChrom(row,:);OldChrom(row+1,:)]);
+            % else 
+            %     NewChrom(row+1,:) = cross_partially_mapped([OldChrom(row+1,:);OldChrom(row,:)]);
+            % end 
+        else
+            NewChrom(row,:) = OldChrom(row,:);
+            NewChrom(row+1,:) = OldChrom(row+1,:);
         end    
     end
 end 
